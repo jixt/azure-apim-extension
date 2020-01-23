@@ -17,6 +17,7 @@ shared VNET
 				{
 					$DisplayName=$newapi
 				}
+		$ServiceUrl=Get-VstsInput -Name ServiceUrl
 		$portal=Get-VstsInput -Name ApiPortalName
 		$rg=Get-VstsInput -Name ResourceGroupName 
 		$SwaggerPicker = Get-VstsInput -Name SwaggerPicker 
@@ -245,6 +246,7 @@ shared VNET
 "name": "'+$($newapi)+'",
 				"properties": {		
 "displayName": "'+$($DisplayName)+'",
+"serviceUrl": "'+$($ServiceUrl)+'",
 				"protocols":["https"],						
 				"path": "'+$($path)+'",'+$AuthorizationBits+'
 			 }
