@@ -24,14 +24,15 @@ shared VNET
 		}
 		$newapi=Get-VstsInput -Name targetapi
 		$DisplayName=Get-VstsInput -Name DisplayName
+		if([string]::IsNullOrEmpty($DisplayName))
+		{
+			$DisplayName=$newapi
+		}
 		if($newapi.startswith("/subscriptions"))
 		{
 			$newapi=$newapi.substring($newapi.indexOf("/apis")+6)
 		}
-		if([string]::IsNullOrEmpty($DisplayName))
-				{
-					$DisplayName=$newapi
-				}
+		$ServiceUrl=Get-VstsInput -Name ServiceUrl -Require
 		$v=Get-VstsInput -Name version
 		$apiVersionIdentifier="$($newapi)$($v)" -replace '\.','-'
 		$portal=Get-VstsInput -Name ApiPortalName
@@ -194,20 +195,21 @@ shared VNET
 				Invoke-WebRequest -UseBasicParsing -Uri $versionseturl  -Body $json -ContentType "application/json" -Headers $headers -Method Put
 				$apiurl="$($baseurl)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"
 				$json = '{
-				  "id":"/apis/'+$($newapi)+'",
-				  "name":"'+$($newapi)+'",
-				  "properties":
-				  { 
-					"displayName":"'+$($DisplayName)+'",'+$AuthorizationBits+',
-					 "path":"'+$($path)+'",
-					 "protocols":["https"],
-					 "apiVersion":"'+$($v)+'",
-					 "apiVersionSet":{
-					   "id":"/api-version-sets/'+$($version)+'",
-					   "name":"'+$($newapi)+'",'+$($scheme)+'					   
-					  },
-					  "apiVersionSetId":"/api-version-sets/'+$version+'"
-				  }
+				  	"id":"/apis/'+$($newapi)+'",
+				  	"name":"'+$($newapi)+'",
+				  	"properties":
+				  	{ 
+						"displayName":"'+$($DisplayName)+'",'+$AuthorizationBits+',
+						"serviceUrl": "'+$($ServiceUrl)+'",
+					 	"path":"'+$($path)+'",
+					 	"protocols":["https"],
+					 	"apiVersion":"'+$($v)+'",
+					 	"apiVersionSet":{
+					   		"id":"/api-version-sets/'+$($version)+'",
+					   		"name":"'+$($newapi)+'",'+$($scheme)+'					   
+					  	},
+					  	"apiVersionSetId":"/api-version-sets/'+$version+'"
+				  	}
 				}'
 				Write-Host "Creating API using $($apiurl) and $($json)"
 				Invoke-WebRequest -UseBasicParsing -Uri $apiurl  -Body $json -ContentType "application/json" -Headers $headers -Method Put

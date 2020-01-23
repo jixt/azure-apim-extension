@@ -17,7 +17,7 @@ shared VNET
 				{
 					$DisplayName=$newapi
 				}
-		$ServiceUrl=Get-VstsInput -Name ServiceUrl
+		$ServiceUrl=Get-VstsInput -Name ServiceUrl -Require
 		$portal=Get-VstsInput -Name ApiPortalName
 		$rg=Get-VstsInput -Name ResourceGroupName 
 		$SwaggerPicker = Get-VstsInput -Name SwaggerPicker 
@@ -122,28 +122,29 @@ shared VNET
 					if($OpenAPISpec -eq "v2")
 					{
 						$json = '{
-"name": "'+$($newapi)+'",
-"id": "/apis/'+$($newapi)+'",
+							"name": "'+$($newapi)+'",
+							"id": "/apis/'+$($newapi)+'",
 							"properties": {
-							"contentFormat": "swagger-link-json",
-							"contentValue": "'+$($SwaggerLocation)+'",
-							"displayName": "'+$($DisplayName)+'",
-							"path": "'+$($path)+'",
-							"protocols":["https"]
-						}
+								"contentFormat": "swagger-link-json",
+								"contentValue": "'+$($SwaggerLocation)+'",
+								"displayName": "'+$($DisplayName)+'",
+								"serviceUrl": "'+$($ServiceUrl)+'",
+								"path": "'+$($path)+'",
+								"protocols":["https"]
+							}
 						}'
 					}
 					else {
 						$json = '{
-"name": "'+$($newapi)+'",
-"id": "/apis/'+$($newapi)+'",
+							"name": "'+$($newapi)+'",
+							"id": "/apis/'+$($newapi)+'",
 							"properties": {
-"displayName": "'+$($DisplayName)+'",
-							"contentFormat": "openapi-link",
-							"contentValue": "'+$($SwaggerLocation)+'",							
-							"path": "'+$($path)+'",
-							"protocols":["https"]
-						}
+								"displayName": "'+$($DisplayName)+'",
+								"contentFormat": "openapi-link",
+								"contentValue": "'+$($SwaggerLocation)+'",							
+								"path": "'+$($path)+'",
+								"protocols":["https"]
+							}
 						}'
 					}					
 				}
@@ -156,15 +157,16 @@ shared VNET
 						 if($OpenAPISpec -eq "v2")
 						 {							 
 							$json = '{
-"name": "'+$($newapi)+'",
-"id": "/apis/'+$($newapi)+'",
+								"name": "'+$($newapi)+'",
+								"id": "/apis/'+$($newapi)+'",
 								"properties": {
-								"contentFormat": "swagger-json",
-								"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
-								"displayName": "'+$($DisplayName)+'",
-								"path": "'+$($path)+'",
-								"protocols":["https"]
-							}
+									"contentFormat": "swagger-json",
+									"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
+									"displayName": "'+$($DisplayName)+'",
+									"serviceUrl": "'+$($ServiceUrl)+'",
+									"path": "'+$($path)+'",
+									"protocols":["https"]
+								}
 							}'
 						 } else{
 							$swaggercode=$swaggercode.Replace("`r`n","`n")
@@ -176,15 +178,15 @@ shared VNET
 								$contentFormat="openapi"
 							 }								 
 							 $json = '{
-"name": "'+$($newapi)+'",
-"id": "/apis/'+$($newapi)+'",
+								"name": "'+$($newapi)+'",
+								"id": "/apis/'+$($newapi)+'",
 								"properties": {
-								"contentFormat": "'+$($contentFormat)+'",
-								"contentValue": "'+$($swaggercode)+'",
-								"displayName": "'+$($DisplayName)+'",
-								"path": "'+$($path)+'",
-								"protocols":["https"]
-							}
+									"contentFormat": "'+$($contentFormat)+'",
+									"contentValue": "'+$($swaggercode)+'",
+									"displayName": "'+$($DisplayName)+'",
+									"path": "'+$($path)+'",
+									"protocols":["https"]
+								}
 							}'
 						 }
 						 
@@ -197,14 +199,15 @@ shared VNET
 					if($OpenAPISpec -eq "v2")
 					{
 						$json = '{
-"name": "'+$($newapi)+'",
-"id": "/apis/'+$($newapi)+'",
+							"name": "'+$($newapi)+'",
+							"id": "/apis/'+$($newapi)+'",
 							"properties": {
-							"contentFormat": "swagger-json",
-							"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
-							"displayName": "'+$($DisplayName)+'",
-							"path": "'+$($path)+'"
-						 }
+								"contentFormat": "swagger-json",
+								"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
+								"displayName": "'+$($DisplayName)+'",
+								"serviceUrl": "'+$($ServiceUrl)+'",
+								"path": "'+$($path)+'"
+							}
 						}'
 					}	
 					else {						
@@ -217,15 +220,16 @@ shared VNET
 								$contentFormat="openapi"
 							 }								 
 							 $json = '{
-"name": "'+$($newapi)+'",
-"id": "/apis/'+$($newapi)+'",
+								"name": "'+$($newapi)+'",
+								"id": "/apis/'+$($newapi)+'",
 								"properties": {
-"displayName": "'+$($DisplayName)+'",
-								"contentFormat": "'+$($contentFormat)+'",
-								"contentValue": "'+$($swaggercode)+'",								
-								"path": "'+$($path)+'",
-								"protocols":["https"]
-							}
+									"displayName": "'+$($DisplayName)+'",
+									"serviceUrl": "'+$($ServiceUrl)+'",
+									"contentFormat": "'+$($contentFormat)+'",
+									"contentValue": "'+$($swaggercode)+'",								
+									"path": "'+$($path)+'",
+									"protocols":["https"]
+								}
 							}'
 					}		
 					
@@ -242,14 +246,14 @@ shared VNET
 		{
 			Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers -Body $json -Method Put -ContentType "application/json"
 			$json = '{
-"id": "/apis/'+$($newapi)+'",
-"name": "'+$($newapi)+'",
+				"id": "/apis/'+$($newapi)+'",
+				"name": "'+$($newapi)+'",
 				"properties": {		
-"displayName": "'+$($DisplayName)+'",
-"serviceUrl": "'+$($ServiceUrl)+'",
-				"protocols":["https"],						
-				"path": "'+$($path)+'",'+$AuthorizationBits+'
-			 }
+					"displayName": "'+$($DisplayName)+'",
+					"serviceUrl": "'+$($ServiceUrl)+'",
+					"protocols":["https"],						
+					"path": "'+$($path)+'",'+$AuthorizationBits+'
+				}
 			}'
 			Write-Host "Updating with authorization information"
 			Write-Host $json
