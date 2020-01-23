@@ -1,9 +1,9 @@
 {
   "manifestVersion": 1,
-  "id": "apim",
+  "id": "burntide-apim",
   "name": "API Management Suite",
   "version": "3.4.3",  
-  "publisher": "jixt",
+  "publisher": "burntide",
   "tags": [
     "API",
     "Security"
@@ -13,7 +13,7 @@
       "path": "overview.md"
     }
   },
-  "public": true,
+  "public": false,
   "links": {
     "getstarted": {
       "uri": "https://github.com/jixt/azure-apim-extension"
